@@ -128,8 +128,8 @@ export class PsnProfileParser {
   }
 
   static async parseGuide(link: string): Promise<PsnProfileGameInfo> {
-    let data = await fetch(`${PsnProfileService.BASE_URL}${link}`);
-    const $ = cheerio.load(data);
+    let data = await fetch(`${PsnProfileService.BASE_URL}${link}`); 
+    const $ = cheerio.load(data.text() + "");
     const difficulty = $('Difficulty').parent().find('.typo-top').text();
     const playthrough = $('Playthroughs').parent().find('.typo-top').text();
     const time = $('Hours').parent().find('.typo-top').text();
