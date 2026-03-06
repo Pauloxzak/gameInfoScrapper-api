@@ -1,10 +1,12 @@
 
+import { parse } from 'querystring';
 import {PsnProfileParser} from './PsnProfileParser'
 import {PsnProfileEntry} from './interfaces/PsnProfileEntry'
 import  axios  from 'axios';
 
 export default class PsnProfileService {
   public static BASE_URL: string = 'https://psnprofiles.com';
+  public static SEARCH_URL: string = '/search/games?q=';
 
   static async profile(name: string): Promise<PsnProfileEntry> {
     let html = await PsnProfileService.loadProfilePage(name, 1)
@@ -13,7 +15,7 @@ export default class PsnProfileService {
     return entry;
   }
 
-  static async game(link: string): Promise<any> {
+  static async getGame(link: string): Promise<any> {
     let { data } = await axios.get<{html:any}>(
       `${PsnProfileService.BASE_URL}${link}?secret=show`
     );
@@ -31,5 +33,22 @@ export default class PsnProfileService {
     } else {
       return data.html + await PsnProfileService.loadProfilePage(name, page+1);
     }
+  }
+
+  static async searchGame(game: string): Promise<any> {
+    let { data } = await axios.get<{html:any}>(
+      `${PsnProfileService.BASE_URL}${PsnProfileService.SEARCH_URL}${PsnProfileParser.prepareGameForSearch(game)}`
+    );
+    let link = PsnProfileParser.parseSearchResult(data.html, game);
+
+    if(!link) {
+      throw new Error('Game not found');
+    }
+    return link;
+  }
+
+  static async getGameDetailsByName(game: string): Promise<any> {
+    const link = await PsnProfileService.searchGame(game);
+    return PsnProfileService.getGame(link);
   }
 }

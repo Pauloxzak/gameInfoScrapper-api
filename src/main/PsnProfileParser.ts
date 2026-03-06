@@ -1,8 +1,12 @@
 
 const cheerio = require('cheerio');
+import axios from 'axios';
 import { PsnProfileEntry } from './interfaces/PsnProfileEntry'
 import { PsnProfileGameEntry } from "./interfaces/PsnProfileGameEntry";
+import { PsnProfileGameInfo } from './interfaces/PsnProfileGameInfo';
 import { PsnProfileTrophieEntry } from "./interfaces/PsnProfileTrophieEntry";
+import PsnProfileService from './PsnProfileService';
+import { html } from 'cheerio/dist/commonjs/static';
 
 export class PsnProfileParser {
 
@@ -72,18 +76,27 @@ export class PsnProfileParser {
     return text && text.replace(/\n/g, '').replace(/\t/g, '  ').replace(/\s+/g, " ").replace(/\b/g, '').trim()
   }
 
-  private static parseGame($:any,  html: Node): PsnProfileGameEntry {
+  private static async parseGame($:any,  html: Node): Promise<PsnProfileGameEntry> {
     const title = $(html).find('.title').text()
     const link = $(html).find('.title').attr('href')
 
     const infosEl = $(html).find('.small-info');
-    const infos = []
+    const infos = [];
+    let details;
     infosEl.each((i) => infos.push($(infosEl[i]).text()));
+
+    try {
+      const guideLink = $(html).find('.guide-page-info sm').child('a').attr('href');
+      details = await PsnProfileParser.parseGuide(guideLink);
+    } catch (error) {
+      console.log('No guide info found', error);
+    }
 
     const smallInfors = this.smallInfoParser(infos.join(" "))
     return {
       title,
       link,
+      details,
       ...smallInfors
     };
   }
@@ -103,5 +116,26 @@ export class PsnProfileParser {
     if(!image) return
      
     return { image, title, description, completed, dlc, completionDate, completionRate, rateTag, kind };
+  }
+
+  static prepareGameForSearch(game: string): string {
+    return game.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, "").trim().replace(/^-+|-+$/g, '').replace(/\s+/g, "%20");
+  } 
+
+  static parseSearchResult(html: string, game: string): string | undefined {
+    const $ = cheerio.load(html);
+    const gameLink = $('a').contains(`${game}`).attr('href');
+    return gameLink;
+  }
+
+  static async parseGuide(link: string): Promise<PsnProfileGameInfo> {
+    let { data } = await axios.get<{html:any}>(
+      `${PsnProfileService.BASE_URL}${link}`
+    );
+    const $ = cheerio.load(data);
+    const difficulty = $(html).includes('Difficulty').parent().find('.typo-top').text();
+    const playthrough = $(html).includes('Playthroughs').parent().find('.typo-top').text();
+    const time = $(html).includes('Hours').parent().find('.typo-top').text();
+    return { difficulty, playthrough, time };
   }
 }
