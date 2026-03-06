@@ -1,5 +1,4 @@
 
-import { parse } from 'querystring';
 import {PsnProfileParser} from './PsnProfileParser'
 import {PsnProfileEntry} from './interfaces/PsnProfileEntry'
 import  axios  from 'axios';
