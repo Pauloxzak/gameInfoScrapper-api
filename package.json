@@ -9,7 +9,9 @@
     "pretest": "tsc --sourcemap",
     "test": "jest",
     "integrationtest": "nyc mocha dist/test/*.integration.test.js",
-    "posttest": "nyc report --reporter=json && codecov -f coverage/*.json"
+    "posttest": "nyc report --reporter=json && codecov -f coverage/*.json",
+    "dev": "nodemon index.js",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +23,7 @@
   "homepage": "https://github.com/ckatzorke/howlongtobeat",
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
+    "express": "^5.2.1",
     "fast-levenshtein": "^2.0.6",
     "request": "^2.88.0"
   },
@@ -30,6 +33,7 @@
     "chai-as-promised": "^6.0.0",
     "codecov": "^3.6.2",
     "hoek": "^5.0.4",
+    "nodemon": "^3.1.14",
     "nyc": "^15.0.0",
     "typescript": "^5.9.3"
   }
