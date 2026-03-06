@@ -1,6 +1,5 @@
 
-const cheerio = require('cheerio');
-import axios from 'axios';
+import cheerio from 'cheerio';
 import { PsnProfileEntry } from './interfaces/PsnProfileEntry'
 import { PsnProfileGameEntry } from "./interfaces/PsnProfileGameEntry";
 import { PsnProfileGameInfo } from './interfaces/PsnProfileGameInfo';
@@ -17,7 +16,7 @@ export class PsnProfileParser {
     let gamesEl = $('tr');
     let games = [];
 
-    gamesEl.each((el) => games.push(this.parseGame($, gamesEl[el])));
+    //gamesEl.each((el) => games.push(this.parseGame($, gamesEl[el])));
     
     // remove last not need item
     games.pop()
@@ -37,7 +36,7 @@ export class PsnProfileParser {
     // first are trophies areas and last are details holder
     let boxEl = $("#content .row div.box.no-top-border")
     let boxes = [];
-    boxEl.each((el) => boxes.push(boxEl[el]))
+    //boxEl.each((el) => boxes.push(boxEl[el]))
 
     let detail = boxes.pop()
 
@@ -49,9 +48,9 @@ export class PsnProfileParser {
       let dlc = base.trim() === '' ? undefined : this.cleanText(base) 
 
       trophiesEl.each((el) => {
-        let parsedTrophie = this.parseTrophie($, trophiesEl[el], dlc)
+        //let parsedTrophie = this.parseTrophie($, trophiesEl[el], dlc)
 
-        if(parsedTrophie) trophies.push(parsedTrophie)
+        //if(parsedTrophie) trophies.push(parsedTrophie)
       });
     })
 
@@ -124,18 +123,16 @@ export class PsnProfileParser {
 
   static parseSearchResult(html: string, game: string): string | undefined {
     const $ = cheerio.load(html);
-    const gameLink = $('a').contains(`${game}`).attr('href');
+    const gameLink = $('a').find(`${game}`).attr('href');
     return gameLink;
   }
 
   static async parseGuide(link: string): Promise<PsnProfileGameInfo> {
-    let { data } = await axios.get<{html:any}>(
-      `${PsnProfileService.BASE_URL}${link}`
-    );
+    let data = await fetch(`${PsnProfileService.BASE_URL}${link}`);
     const $ = cheerio.load(data);
-    const difficulty = $(html).includes('Difficulty').parent().find('.typo-top').text();
-    const playthrough = $(html).includes('Playthroughs').parent().find('.typo-top').text();
-    const time = $(html).includes('Hours').parent().find('.typo-top').text();
+    const difficulty = $('Difficulty').parent().find('.typo-top').text();
+    const playthrough = $('Playthroughs').parent().find('.typo-top').text();
+    const time = $('Hours').parent().find('.typo-top').text();
     return { difficulty, playthrough, time };
   }
 }
