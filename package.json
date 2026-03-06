@@ -25,6 +25,7 @@
     "request": "^2.88.0"
   },
   "devDependencies": {
+    "@types/node": "^25.3.5",
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "codecov": "^3.6.2",
