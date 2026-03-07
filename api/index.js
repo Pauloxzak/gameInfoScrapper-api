@@ -1,4 +1,4 @@
-const PsnProfileService = require('../src/main/PsnProfileService.ts') // Ajuste o caminho conforme sua pasta
+const PsnProfileService = require('../src/main/PsnProfileService');
 
 try {
     cors = require('cors');
