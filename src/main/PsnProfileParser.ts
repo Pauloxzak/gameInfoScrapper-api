@@ -1,5 +1,5 @@
 
-import cheerio from 'cheerio';
+const cheerio = require('cheerio'); // Certifique-se que o nome está minúsculo
 import { PsnProfileEntry } from './interfaces/PsnProfileEntry'
 import { PsnProfileGameEntry } from "./interfaces/PsnProfileGameEntry";
 import { PsnProfileGameInfo } from './interfaces/PsnProfileGameInfo';
