@@ -28,6 +28,9 @@
     "fast-levenshtein": "^2.0.6",
     "request": "^2.88.0"
   },
+  "bundledDependencies": [
+    "cors"
+  ],
   "devDependencies": {
     "@types/node": "^25.3.5",
     "chai": "^3.5.0",
