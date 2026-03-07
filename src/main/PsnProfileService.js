@@ -26,11 +26,21 @@ export default class PsnProfileService {
   }
 
   static async searchGame(game) {
-    let data = await fetch(`${PsnProfileService.BASE_URL}${PsnProfileService.SEARCH_URL}${PsnProfileParser.prepareGameForSearch(game)}`);
-    let link = PsnProfileParser.parseSearchResult((await data.text()).toString(), game);
-
-    if(!link) {
-      throw new Error('Game not found');
+    try {
+      let data = await fetch(`${PsnProfileService.BASE_URL}${PsnProfileService.SEARCH_URL}${PsnProfileParser.prepareGameForSearch(game)}`,
+      {
+        headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+      });
+      let link = PsnProfileParser.parseSearchResult((await data.text()).toString(), game);
+  
+      if(!link) {
+        throw new Error('Game not found');
+      }
+    } catch (error) {
+      console.error("Falha no Scraping:", error);
+      throw error;
     }
     return link;
   }

@@ -36,7 +36,7 @@ app.get('/api/psn/profile/:username', async (req, res) => {
 // Endpoint para buscar apenas os jogos
 app.get('/api/getGameByName', async (req, res) => {
     try {
-        const { game } = req.params;
+        const { game } = req.query;
         const games = await PsnProfileService.getGameByName(game);
         
         return res.status(200).json(games);
