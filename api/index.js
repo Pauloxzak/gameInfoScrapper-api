@@ -2,7 +2,7 @@ const PsnProfileService = require('../src/main/PsnProfileService');
 
 try {
     cors = require('cors');
-    const express = require('express');
+    const app = require('express');
     // ... resto do seu código
 
     // Endpoint para buscar o perfil completo
