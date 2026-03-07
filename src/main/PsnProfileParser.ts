@@ -123,6 +123,7 @@ export class PsnProfileParser {
 
   static parseSearchResult(html: string, game: string): string | undefined {
     const $ = cheerio.load(html);
+    console.log(html);
     const gameLink = $('a').find(`${game}`).attr('href');
     return gameLink;
   }
