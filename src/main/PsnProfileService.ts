@@ -35,7 +35,7 @@ export default class PsnProfileService {
     return link;
   }
 
-  static async getGameDetailsByName(game: string): Promise<any> {
+  static async getGameByName(game: string): Promise<any> {
     const link = await PsnProfileService.searchGame(game);
     return PsnProfileService.getGame(link);
   }

@@ -1,16 +1,37 @@
 const express = require('express');
-const app = express();
-const PORT = process.env.PORT || 3000;
+const cors = require('cors');
+const PsnProfileService = require('../src/main/PsnProfileService.ts') // Ajuste o caminho conforme sua pasta
 
-// Middleware to parse JSON request bodies
+const app = express();
+app.use(cors());
 app.use(express.json());
 
-// Define a route for the API
-app.get('/api/status', (req, res) => {
-  res.json({ status: 'Running', timestamp: new Date().toISOString() });
+// Endpoint para buscar o perfil completo
+app.get('/api/psn/profile/:username', async (req, res) => {
+    try {
+        const { username } = req.params;
+        
+        // Chamando a função do seu serviço
+        const profileData = await PsnProfileService.getProfile(username);
+        
+        return res.status(200).json(profileData);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Erro ao buscar perfil PSN' });
+    }
 });
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is listening on port ${PORT}`);
+// Endpoint para buscar apenas os jogos
+app.get('/api/getGameByName', async (req, res) => {
+    try {
+        const { game } = req.params;
+        const games = await PsnProfileService.getGameByName(game);
+        
+        return res.status(200).json(games);
+    } catch (error) {
+        return res.status(500).json({ error: 'Erro ao buscar jogos' });
+    }
 });
+
+// IMPORTANTE PARA VERCEL: Exportar o app em vez de dar app.listen()
+module.exports = app;
